@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Wetter</title>
+    <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Einfach nur das Wetter">
+    <meta property="og:url" content="https://fablog.eu/wetter/index.html">
+    <meta property="og:type" content="web application">
+    <meta property="og:title" content="Wetter">
+    <meta property="og:description" content="Einfach nur das Wetter">
+    <meta property="og:image" content="https://fablog.eu/wetter/pix/screenshot.webp">
+
+    <style>
+        * {
+            scroll-behavior: smooth;
+        }
+        body {
+            background-color: hsl(210, 50%, 12%);
+            margin: 0;
+            font-family: monospace;
+        }
+
+        input {
+            float: right;
+            border: none;
+            outline: none;
+            margin: 24px 0 0 0;
+            padding: 6px 12px;
+            border-radius: 12px;
+            width: 120px;
+            background-color: hsl(210, 50%, 85%);
+        }
+
+        input:focus {
+            outline: 3px solid hsl(210, 50%, 50%);
+        }
+
+        img {
+            margin: 30px auto 0 auto;
+            width: 120px;
+        }
+
+        h2 {
+            margin: 0 0 25px 0;
+        }
+
+        .sel {
+            float: right;
+        }
+
+        .card {
+            width: 800px;
+            margin: 25px calc(50% - 425px);
+            padding: 25px;
+            background-color: hsl(210, 50%, 18%);
+            color: hsl(210, 50%, 85%);
+            font-family: monospace;
+            border-radius: 12px;
+            overflow: auto;
+            white-space: nowrap;
+        }
+
+        .card p {
+            margin: 6px 0;
+        }
+
+        .currentTiles, .forecastTiles {
+            display: grid;
+            column-gap: 6px;
+            text-align: center;
+        }
+
+        .currentTiles {
+            grid-template-columns: 120px 100px auto;
+            grid-template-areas: "legende werte icon";
+        }
+
+        .forecastTiles {
+            grid-template-columns: 120px repeat(6, minmax(75px, 120px));
+        }
+
+        .tile {
+            background-color: hsl(210, 50%, 12%);
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+
+        .tile hr {
+            border: none;
+            border-bottom: 1px solid hsl(210, 50%, 24%);
+        }
+
+        .icon {
+            margin: 3px 0;
+            width: 25px;
+        }
+
+        .arrows {
+            width: 36px;
+            margin: 0 0 0 12px;
+            float: right;
+        }
+
+        .arrows:hover {
+            cursor: pointer;
+            filter: brightness(120%);
+        }
+
+        .disabled {
+            opacity: 0.2;
+        }
+
+        .disabled:hover {
+            cursor: auto;
+            filter: none;
+        }
+
+        .modal {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: hsl(210, 50%, 18%);
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 0 24px black;
+            font-family: monospace;
+        }
+         .modal p {
+            background-color: hsl(210, 50%, 85%);
+            padding: 6px 12px;
+            margin: 6px 12px;
+            border-radius: 12px;
+         }
+
+         .modal p:hover {
+            cursor: pointer;
+            filter: brightness(120%);
+        }
+
+        .modal h3 {
+            text-align: center;
+            color: hsl(210, 50%, 85%);
+        }
+
+        @media (max-width: 850px) {
+            .card {
+                margin: 12px 0;
+                padding: 25px 12px;
+                width: calc(100% - 24px);
+                border-radius: 0;
+            }
+            .forecastTiles {
+                grid-template-columns: 120px repeat(24, minmax(75px, 120px));
+            }
+        }
+
+        @media (max-width: 500px) {
+            input {
+                float: none;
+                margin-top: 6px;
+            }            
+            img {
+                margin: 45px auto 0 auto;
+                /* margin: 0 auto 12px auto; */
+                width: 60px;
+            }
+            .currentTiles {
+                grid-template-columns: 120px 75px auto;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+
+            <!-- <button id="btnSearch">los</button> -->
+            <input type="text" id="inpSearch" placeholder="Ort suchen"/>
+
+        <h1 id="currentCity">Berlin</h1>
+
+        <div class="currentTiles"></div>
+    </div>
+    
+    <div class="card" id="forecast">
+
+        <img src="pix/arrowRight.webp" class="arrows" id="arrowRight">
+        <img src="pix/arrowLeft.webp" class="arrows disabled" id="arrowLeft">
+
+        <h2 id="forecast">Vorhersage</h2>
+
+        <div class="forecastTiles"></div>
+
+    </div>
+
+    <div class="modal" id="modalSearchResults">
+        <h3>Bitte wählen</h3>
+    </div>
+
+    <script src="app.js" defer></script>
+</body>
+
+</html>
