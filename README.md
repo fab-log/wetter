@@ -5,4 +5,4 @@ On large screens the forcast has a pagination displaying 6 hours each. On smalle
 To get additional information on the cloud cover you can hover over the weather icons.
 The data is provided by the open-meteo.com API and is for private use only.
 
-![screenshot](https://github.com/fab-log/wetter/blob/main/screenshot.png)
+![screenshot](https://github.com/fab-log/wetter/blob/main/screenshot.webp)
