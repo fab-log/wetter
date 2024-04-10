@@ -14,6 +14,7 @@
 
     <style>
         * {
+            transition: all ease-in-out 0.1s;
             scroll-behavior: smooth;
         }
         body {
@@ -48,6 +49,11 @@
 
         .sel {
             float: right;
+        }
+
+        .small {
+            font-size: 85%;
+            color: hsl(210, 50%, 67%);
         }
 
         .card {
@@ -97,6 +103,12 @@
             width: 25px;
         }
 
+        .wind-icon {
+            width: 13px;
+            margin: 0;
+            padding: 0;
+        }
+
         .arrows {
             width: 36px;
             margin: 0 0 0 12px;
@@ -120,9 +132,9 @@
         .modal {
             display: none;
             position: absolute;
-            top: 50%;
+            top: 100px;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, 0);
             background-color: hsl(210, 50%, 18%);
             padding: 12px;
             border-radius: 12px;
@@ -138,12 +150,29 @@
 
          .modal p:hover {
             cursor: pointer;
-            filter: brightness(120%);
+            background-color: hsl(210, 50%, 50%);
+            color: white;
         }
 
         .modal h3 {
             text-align: center;
             color: hsl(210, 50%, 85%);
+        }
+
+        .alert {
+            display: none;
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            background-color: hsl(210, 50%, 18%);
+            color: hsl(210, 50%, 85%);
+            opacity: 0.95;
+            border-radius: 12px;
+            border: solid 4px hsl(210, 50%, 50%);
+            box-shadow: 0 0 24px black;
+            padding: 24px;
+            text-align: center;
         }
 
         @media (max-width: 850px) {
@@ -193,7 +222,7 @@
         <img src="pix/arrowRight.webp" class="arrows" id="arrowRight">
         <img src="pix/arrowLeft.webp" class="arrows disabled" id="arrowLeft">
 
-        <h2 id="forecast">Vorhersage</h2>
+        <h2 id="forecast">Vorhersage <span class="small">24h</span></h2>
 
         <div class="forecastTiles"></div>
 
@@ -202,6 +231,8 @@
     <div class="modal" id="modalSearchResults">
         <h3>Bitte wählen</h3>
     </div>
+
+    <div class="alert"></div>
 
     <script src="app.js" defer></script>
 </body>

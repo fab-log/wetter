@@ -8,8 +8,6 @@ const cities = [
 	["Leipziig", 51.33, 12.38]
 ]
 
-console.log("window width: " + window.innerWidth + "px");
-
 let city = "Berlin";
 let lat = 52.51;
 let lon = 13.4;
@@ -42,6 +40,17 @@ const modalSearchResults = document.querySelector("#modalSearchResults");
 const currentCity = document.querySelector("#currentCity");
 // const btnSearch = document.querySelector("#btnSearch");
 
+
+	// ###### HELPERS ######
+
+const iconPicker = (clouds, rain) => {
+	let imagePath = "pix/sunny.webp";
+	if (rain > 50) {imagePath = "pix/rain.webp"}
+	else if (clouds > 33 && clouds <= 75) {imagePath = "pix/partially_cloudy.webp"}
+	else if (clouds > 75) {imagePath = "pix/cloudy.webp"};
+	return imagePath;
+}
+
 const pickLocation = (location, latitude, longitude) => {
 	lat = latitude;
 	lon = longitude;
@@ -55,7 +64,20 @@ const pickLocation = (location, latitude, longitude) => {
 		lon: longitude
 	}
 	localStorage.setItem("fablogWetterConfig", JSON.stringify(config));
-}
+};
+
+const showAlert = (text) => {
+	const alert = document.querySelector(".alert");
+	alert.style.display = "block";
+	alert.innerHTML = `<p>${text}</p>`;
+	setTimeout(() => {
+			alert.innerHTML = "";
+			alert.style.display = "none";
+	}, 3000);
+};
+
+
+// ###### SEARCH ######
 
 const search = () => {
 	searchName = inpSearch.value;
@@ -64,26 +86,38 @@ const search = () => {
 	fetch(searchUrl)
 		.then(response => {
 			if (!response.ok) {
+				showAlert("Verbindungsproblem!");
 				throw new Error("API issues.");
 		}
 		return response.json();
 		})
 		.then(data => {			
-			console.log("search response" + JSON.stringify(data, null, 2));
-			modalSearchResults.innerHTML = "<h3>Bitte wählen</h3>";
-			modalSearchResults.style.display = "block";
-			let index = 1;
-			
-			data.results.forEach(e => {;
-				modalSearchResults.insertAdjacentHTML("beforeend", `
-				<p id="index${index}" onclick="pickLocation('${e.name}', ${e.latitude}, ${e.longitude})">${e.name}, ${e.country}</p>
-				`);
-
-				index += 1;
-			});
-			inpSearch.value = "";
+			// console.log("search response" + JSON.stringify(data, null, 2));
+			if (data.results === undefined) {
+				showAlert("Keine Treffer für<br>" + inpSearch.value);
+				inpSearch.value = "";
+				return;
+			} else if (data.results.length === 1) {
+				let results = data.results[0];
+				inpSearch.value = "";
+				inpSearch.blur();
+				pickLocation(results.name, results.latitude, results.longitude);
+				return;
+			} else {
+				modalSearchResults.innerHTML = "<h3>Bitte wählen</h3>";
+				modalSearchResults.style.display = "block";
+				let index = 1;
+				data.results.forEach(e => {;
+					modalSearchResults.insertAdjacentHTML("beforeend", `
+					<p id="index${index}" onclick="pickLocation('${e.name}', ${e.latitude}, ${e.longitude})">${e.name}, ${e.country}</p>
+					`);
+					index += 1;
+				});
+				inpSearch.value = "";
+			}
 		})
 		.catch(error => {
+			showAlert("Fehler!");
 			console.error(error);
 	});
 }
@@ -91,18 +125,14 @@ const search = () => {
 inpSearch.addEventListener("change", search);
 // btnSearch.addEventListener("click", search);
 
-const iconPicker = (clouds, rain) => {
-	let imagePath = "pix/sunny.webp";
-	if (rain > 50) {imagePath = "pix/rain.webp"}
-	else if (clouds > 33 && clouds <= 75) {imagePath = "pix/partially_cloudy.webp"}
-	else if (clouds > 75) {imagePath = "pix/cloudy.webp"};
-	return imagePath;
-}
+
+// ###### FETCH DATA ######
 
 const getData = (url) => {
 	fetch(url)
     .then(response => {
         if (!response.ok) {
+					showAlert("Verbindungsproblem!");
             throw new Error("API issues.");
         }
         return response.json();
@@ -114,6 +144,12 @@ const getData = (url) => {
 				currentCity.innerHTML = config.city;
 				let currentTime = `${Number(current.time.substring(11, 13)) + 2}:${current.time.substring(14)}`;
 				if ((Number(current.time.substring(11, 13)) + 2) === 25) {currentTime = "01:00"};
+				let windIcon = "🠕";
+				let windColor = "hsl(210, 50%, 85%)";
+				let tempColor = "hsl(210, 50%, 85%)";
+				if (current.temperature_2m > 29.9) {tempColor = "hsl(30, 50%, 50%)"};
+				if (current.temperature_2m <= 0) {tempColor = "hsl(210, 55%, 55%)"};
+				if (current.wind_speed_10m > 30) {windColor = "hsl(30, 50%, 50%)"};
 				document.querySelector(".currentTiles").innerHTML = `
 					<div class="tile" style="text-align: left; grid-area: legende;">
 						<p>${(current.time).substring(8, 10)}.${(current.time).substring(5, 7)}.${(current.time).substring(0, 4)}</p>
@@ -131,11 +167,11 @@ const getData = (url) => {
 					<div class="tile" style="grid-area: werte";>
 						<p>${currentTime}</p>
 						<hr>
-						<p>${current.temperature_2m.toFixed(0)}°C</p>
+						<p style="color: ${tempColor}">${current.temperature_2m.toFixed(0)}°C</p>
 						<hr>
-						<p>${current.wind_speed_10m.toFixed(0)} km/h</p>
+						<p style="color: ${windColor};">${current.wind_speed_10m.toFixed(0)} km/h</p>
 						<hr>
-						<p style="transform: rotate(${current.wind_direction_10m}deg); scale: 1.5">⇈</p>
+						<p style="transform: rotate(${current.wind_direction_10m}deg); scale: 1.5;">↓</p>
 						<hr>
 						<p>${current.relative_humidity_2m}%</p>
 						<hr>
@@ -171,7 +207,7 @@ const getData = (url) => {
 			</div>
 			`;
 
-			for (let i = 0; i < 48; i++) {
+			/* for (let i = 0; i < 48; i++) {
 				console.log("########################");
 				console.log(hourly.time[i].substring(0, 10) + " | " + hourly.time[i].substring(11));
 				console.log("temp: " + hourly.temperature_2m[i]);
@@ -180,7 +216,7 @@ const getData = (url) => {
 				console.log("humidity: " + hourly.relative_humidity_2m[i]);
 				console.log("precipitation: " + hourly.precipitation_probability[i]);
 				console.log("cloud cover: " + hourly.cloud_cover[i]);
-			}
+			} */
 			
 			const renderHourly = () => {
 				forecastTiles.innerHTML = forecastFirstColumn;
@@ -192,18 +228,24 @@ const getData = (url) => {
 				}
 				for(let i = start; i < start + length; i++) {
 					let time = `${Number(hourly.time[i].substring(11, 13)) + 2}:00`;
-					if ((Number(hourly.time[i].substring(11, 13)) + 2) === 25) {time = "01:00"}
+					if ((Number(hourly.time[i].substring(11, 13)) + 2) === 25) {time = "01:00"};
+					let windIcon = "🠕";
+					let windColor = "hsl(210, 50%, 85%)";
+					let tempColor = "hsl(210, 50%, 85%)";
+					if (hourly.temperature_2m[i] > 29.9) {tempColor = "hsl(30, 50%, 50%)"};
+					if (hourly.temperature_2m[i] <= 0) {tempColor = "hsl(210, 55%, 55%)"};
+					if (hourly.wind_speed_10m[i] > 30) {windColor = "hsl(30, 50%, 50%)"};
 					forecastTiles.insertAdjacentHTML("beforeend", `
 						<div class="tile" id="index${i}">
 							<img src=${iconPicker(hourly.cloud_cover[i], hourly.precipitation_probability[i])} class="icon" title="Wolkendecke: ${hourly.cloud_cover[i]}%">
 							<hr>
 							<p>${time}</p>
 							<hr>
-							<p>${hourly.temperature_2m[i].toFixed(0)}°C</p>
+							<p style="color: ${tempColor}">${hourly.temperature_2m[i].toFixed(0)}°C</p>
 							<hr>
-							<p>${hourly.wind_speed_10m[i].toFixed(0)} km/h</p>
+							<p style="color: ${windColor};">${hourly.wind_speed_10m[i].toFixed(0)} km/h</p>
 							<hr>
-							<p style="transform: rotate(${hourly.wind_direction_10m[i]}deg); scale: 1.5">⇈</p>
+							<p style="transform: rotate(${hourly.wind_direction_10m[i]}deg); scale: 1.5;">↓</p>
 							<hr>
 							<p>${hourly.relative_humidity_2m[i]}%</p>
 							<hr>
@@ -214,13 +256,14 @@ const getData = (url) => {
 			}
 
 			renderHourly();
+
 			if (window.innerWidth < 850) {
 				setTimeout(() => {
 					document.querySelector("#index20").scrollIntoView();
-				}, 1500);
+				}, 2500);
 				setTimeout(() => {
 					document.querySelector(".forecastTiles").scrollIntoView({ inline: "end" });
-				}, 2750);
+				}, 3750);
 			}
 
 			let arrowRight = document.querySelector("#arrowRight");
@@ -254,7 +297,12 @@ const getData = (url) => {
     })
     .catch(error => {
         console.error(error);
+				showAlert(error);
     });
 }
 
 getData(url);
+
+setInterval(() => {
+	getData(url);
+}, 900000);
