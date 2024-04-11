@@ -17,10 +17,45 @@
             transition: all ease-in-out 0.1s;
             scroll-behavior: smooth;
         }
+
+        :root {
+            --bg-color1: hsl(210, 50%, 12%);
+            --bg-color2: hsl(210, 50%, 18%);
+            --bg-color3: hsl(210, 50%, 20%);
+            --bg-color4: hsl(210, 50%, 25%);
+            --bg-input: hsl(210, 50%, 85%);
+            --accent-color: hsl(210, 50%, 50%);
+            --accent-light: hsl(210, 55%, 60%);
+            --accent-orange: hsl(30, 50%, 50%);
+            --color1: hsl(210, 50%, 85%);
+            --color2: hsl(210, 50%, 75%);
+            --color100: hsl(210, 50%, 100%);
+            --color-input: hsl(210, 50%, 12%);
+            --shadow: hsl(210, 50%, 0%);
+            --border-radius: 12px;
+        }
+
+        .light-mode {
+            --bg-color1: hsl(210, 50%, 80%);
+            --bg-color2: hsl(210, 50%, 85%);
+            --bg-color3: hsl(210, 50%, 90%);
+            --bg-color4: hsl(210, 50%, 95%);
+            --bg-input: hsl(210, 50%, 100%);
+            --accent-color: hsl(210, 50%, 50%);
+            --accent-light: hsl(210, 60%, 50%);
+            --accent-orange: hsl(30, 50%, 50%);
+            --color1: hsl(210, 50%, 25%);
+            --color2: hsl(210, 50%, 15%);
+            --color100: hsl(210, 50%, 0%);
+            --color-input: hsl(210, 50%, 15%);
+            --shadow: hsl(210, 50%, 20%);
+        }
+
         body {
-            background-color: hsl(210, 50%, 12%);
+            background-color: var(--bg-color1);
             margin: 0;
             font-family: monospace;
+            color: var(--color1);
         }
 
         input {
@@ -29,13 +64,14 @@
             outline: none;
             margin: 24px 0 0 0;
             padding: 6px 12px;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             width: 120px;
-            background-color: hsl(210, 50%, 85%);
+            background-color: var(--bg-input);
+            color: var(--color-input);
         }
 
         input:focus {
-            outline: 3px solid hsl(210, 50%, 50%);
+            outline: 3px solid var(--accent-color);
         }
 
         img {
@@ -43,7 +79,7 @@
             width: 120px;
         }
 
-        h2 {
+        h3 {
             margin: 0 0 25px 0;
         }
 
@@ -51,8 +87,7 @@
             float: right;
         }
 
-        .small {
-            font-size: 85%;
+        .decent {
             color: hsl(210, 50%, 67%);
         }
 
@@ -60,10 +95,9 @@
             width: 800px;
             margin: 25px calc(50% - 425px);
             padding: 25px;
-            background-color: hsl(210, 50%, 18%);
-            color: hsl(210, 50%, 85%);
+            background-color: var(--bg-color3);
             font-family: monospace;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             overflow: auto;
             white-space: nowrap;
         }
@@ -88,14 +122,14 @@
         }
 
         .tile {
-            background-color: hsl(210, 50%, 12%);
+            background-color: var(--bg-color1);
             padding: 6px 12px;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
         }
 
         .tile hr {
             border: none;
-            border-bottom: 1px solid hsl(210, 50%, 24%);
+            border-bottom: 1px solid var(--bg-color3);
         }
 
         .icon {
@@ -103,10 +137,23 @@
             width: 25px;
         }
 
-        .wind-icon {
-            width: 13px;
-            margin: 0;
+        .sun-icon {
+            width: 25px;
+            margin: 0 0 -8px 0;
             padding: 0;
+        }
+
+        .toggle-icon {
+            width: 25px;
+            margin: 25px;
+            padding: 0; float: right;
+            filter: grayscale(100%);
+            opacity: 0.5;
+        }
+
+        #btnDarkMode {
+            display: none;
+            filter: brightness(0%);
         }
 
         .arrows {
@@ -135,28 +182,29 @@
             top: 100px;
             left: 50%;
             transform: translate(-50%, 0);
-            background-color: hsl(210, 50%, 18%);
+            background-color: var(--bg-color3);
             padding: 12px;
-            border-radius: 12px;
-            box-shadow: 0 0 24px black;
+            border-radius: var(--border-radius);
+            box-shadow: 0 0 24px var(--shadow);
             font-family: monospace;
         }
          .modal p {
-            background-color: hsl(210, 50%, 85%);
+            background-color: var(--color1);
+            color: var(--bg-color1);
             padding: 6px 12px;
             margin: 6px 12px;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
          }
 
          .modal p:hover {
             cursor: pointer;
-            background-color: hsl(210, 50%, 50%);
+            background-color: var(--accent-color);
             color: white;
         }
 
         .modal h3 {
             text-align: center;
-            color: hsl(210, 50%, 85%);
+            color: var(--color1);
         }
 
         .alert {
@@ -165,12 +213,12 @@
             top: 100px;
             left: 50%;
             transform: translate(-50%, 0);
-            background-color: hsl(210, 50%, 18%);
-            color: hsl(210, 50%, 85%);
+            background-color: var(--bg-color3);
+            color: var(--color1);
             opacity: 0.95;
-            border-radius: 12px;
-            border: solid 4px hsl(210, 50%, 50%);
-            box-shadow: 0 0 24px black;
+            border-radius: var(--border-radius);
+            border: solid 4px var(--accent-color);
+            box-shadow: 0 0 24px var(--shadow);
             padding: 24px;
             text-align: center;
         }
@@ -193,12 +241,15 @@
                 margin-top: 6px;
             }            
             img {
-                margin: 45px auto 0 auto;
+                margin: 50px auto 0 auto;
                 /* margin: 0 auto 12px auto; */
                 width: 60px;
             }
             .currentTiles {
                 grid-template-columns: 120px 75px auto;
+            }
+            .toggle-icon {
+                margin: 10px 10px 0 0;
             }
         }
 
@@ -209,20 +260,22 @@
 
     <div class="card">
 
-            <!-- <button id="btnSearch">los</button> -->
-            <input type="text" id="inpSearch" placeholder="Ort suchen"/>
+        <img src="pix/sunny.webp" class="toggle-icon" title="toggle light mode" id="btnLightMode" onclick="toggleLightMode()">
+        <img src="pix/sunny_night.webp" class="toggle-icon" title="toggle dark mode" id="btnDarkMode" onclick="toggleDarkMode()">
+            
+        <input type="text" id="inpSearch" placeholder="Ort suchen"/>
 
-        <h1 id="currentCity">Berlin</h1>
+        <h1 id="currentCity"></h1>
 
         <div class="currentTiles"></div>
     </div>
     
-    <div class="card" id="forecast">
+    <div class="card">
 
         <img src="pix/arrowRight.webp" class="arrows" id="arrowRight">
         <img src="pix/arrowLeft.webp" class="arrows disabled" id="arrowLeft">
 
-        <h2 id="forecast">Vorhersage <span class="small">24h</span></h2>
+        <h3 id="forecast" class="decent"></h3>
 
         <div class="forecastTiles"></div>
 

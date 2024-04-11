@@ -1,68 +1,54 @@
-const cities = [
-	["Berlin", 52.51, 13.40],
-	["Hamburg", 53.51, 10.00],
-	["Munich", 48.13, 11.57],
-	["Düsseldorf", 51.23, 6.78],
-	["Frankfurt", 50.11, 8.68],
-	["Stuttgart", 48.78, 9.18],
-	["Leipziig", 51.33, 12.38]
-]
-
 let city = "Berlin";
 let lat = 52.51;
 let lon = 13.4;
 let config = {};
 
-const getConfig = () => {
-	if (localStorage.getItem("fablogWetterConfig") === null) {
-			config = {
-					city: "Berlin",
-					lat: 52.51,
-					lon: 13.4
-			}
-	} else {
-			config = JSON.parse(localStorage.getItem("fablogWetterConfig"));
-	};
-	console.log("config: " + JSON.stringify(config, null, 2));
-}
-
-getConfig();
-
-city = config.city;
-lat = config.lat;
-lon = config.lon;
-
-let url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,relative_humidity_2m,precipitation_probability,weather_code,cloud_cover&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,precipitation_probability,weather_code,cloud_cover`;
-// const url = "https://api.open-meteo.com/v1/forecast?latitude=51.48&longitude=7.22&current=temperature_2m,wind_speed_10m,relative_humidity_2m,precipitation_probability,weather_code&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation_probability,weather_code";
-
 const inpSearch = document.querySelector("#inpSearch");
 const modalSearchResults = document.querySelector("#modalSearchResults");
 const currentCity = document.querySelector("#currentCity");
-// const btnSearch = document.querySelector("#btnSearch");
+const btnLightMode = document.querySelector("#btnLightMode");
+const btnDarkMode = document.querySelector("#btnDarkMode");
 
 
 	// ###### HELPERS ######
 
-const iconPicker = (clouds, rain) => {
+const toggleLightMode = () => {
+	document.body.classList.add("light-mode");
+	btnLightMode.style.display = "none";
+	btnDarkMode.style.display = "block";
+	config.mode = "light";
+	localStorage.setItem("fablogWetterConfig", JSON.stringify(config));
+}
+
+const toggleDarkMode = () => {
+	document.body.classList.remove("light-mode");
+	btnDarkMode.style.display = "none";
+	btnLightMode.style.display = "block";
+	config.mode = "dark";
+	localStorage.setItem("fablogWetterConfig", JSON.stringify(config));
+}
+
+const iconPicker = (clouds, rain, time, sunrise, sunset) => {
 	let imagePath = "pix/sunny.webp";
 	if (rain > 50) {imagePath = "pix/rain.webp"}
+	else if (time > sunset && clouds > 33 && clouds <= 75) {imagePath = "pix/partially_cloudy_night.webp"}
+	else if (time <= sunrise && clouds > 33 && clouds <= 75) {imagePath = "pix/partially_cloudy_night.webp"}
 	else if (clouds > 33 && clouds <= 75) {imagePath = "pix/partially_cloudy.webp"}
-	else if (clouds > 75) {imagePath = "pix/cloudy.webp"};
+	else if (clouds > 75) {imagePath = "pix/cloudy.webp"}
+	else if (time > sunset || time <= sunrise) {imagePath = "pix/sunny_night.webp"}
 	return imagePath;
 }
 
 const pickLocation = (location, latitude, longitude) => {
 	lat = latitude;
 	lon = longitude;
-	url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,relative_humidity_2m,precipitation_probability,weather_code,cloud_cover&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,precipitation_probability,weather_code,cloud_cover`;
+	let url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation_probability,cloud_cover,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,cloud_cover,wind_speed_10m,wind_direction_10m&daily=sunrise,sunset&timezone=Europe%2FBerlin`;
 	getData(url);
 	currentCity.innerHTML = location;
 	modalSearchResults.style.display = "none";
-	config = {
-		city: location,
-		lat: latitude,
-		lon: longitude
-	}
+	config.city = location;
+	config.lat = latitude;
+	config.lon = longitude;
 	localStorage.setItem("fablogWetterConfig", JSON.stringify(config));
 };
 
@@ -75,6 +61,27 @@ const showAlert = (text) => {
 			alert.style.display = "none";
 	}, 3000);
 };
+
+const getConfig = () => {
+	if (localStorage.getItem("fablogWetterConfig") === null) {
+			config = {
+					city: "Berlin",
+					lat: 52.51,
+					lon: 13.4,
+					mode: "dark"
+			}
+	} else {
+			config = JSON.parse(localStorage.getItem("fablogWetterConfig"));
+			city = config.city;
+			lat = config.lat;
+			lon = config.lon;
+			mode = config.mode;
+	};
+	console.log("config: " + JSON.stringify(config, null, 2));
+}
+
+getConfig();
+if (config.mode === "light") {toggleLightMode()};
 
 
 // ###### SEARCH ######
@@ -107,7 +114,7 @@ const search = () => {
 				modalSearchResults.innerHTML = "<h3>Bitte wählen</h3>";
 				modalSearchResults.style.display = "block";
 				let index = 1;
-				data.results.forEach(e => {;
+				data.results.forEach(e => {
 					modalSearchResults.insertAdjacentHTML("beforeend", `
 					<p id="index${index}" onclick="pickLocation('${e.name}', ${e.latitude}, ${e.longitude})">${e.name}, ${e.country}</p>
 					`);
@@ -123,7 +130,6 @@ const search = () => {
 }
 
 inpSearch.addEventListener("change", search);
-// btnSearch.addEventListener("click", search);
 
 
 // ###### FETCH DATA ######
@@ -139,17 +145,15 @@ const getData = (url) => {
     })
     .then(data => {
 			let current = data.current;
+			// console.log(JSON.stringify(data, null, 2));
 
 			const renderCurrent = () => {
 				currentCity.innerHTML = config.city;
-				let currentTime = `${Number(current.time.substring(11, 13)) + 2}:${current.time.substring(14)}`;
-				if ((Number(current.time.substring(11, 13)) + 2) === 25) {currentTime = "01:00"};
-				let windIcon = "🠕";
-				let windColor = "hsl(210, 50%, 85%)";
-				let tempColor = "hsl(210, 50%, 85%)";
-				if (current.temperature_2m > 29.9) {tempColor = "hsl(30, 50%, 50%)"};
-				if (current.temperature_2m <= 0) {tempColor = "hsl(210, 55%, 55%)"};
-				if (current.wind_speed_10m > 30) {windColor = "hsl(30, 50%, 50%)"};
+				let windColor = "var(--color1)";
+				let tempColor = "var(--color1)";
+				if (current.temperature_2m > 29.9) {tempColor = "var(--accent-orange)"};
+				if (current.temperature_2m <= 0) {tempColor = "var(--accent-light)"};
+				if (current.wind_speed_10m > 30) {windColor = "var(--accent-orange)"};
 				document.querySelector(".currentTiles").innerHTML = `
 					<div class="tile" style="text-align: left; grid-area: legende;">
 						<p>${(current.time).substring(8, 10)}.${(current.time).substring(5, 7)}.${(current.time).substring(0, 4)}</p>
@@ -165,20 +169,20 @@ const getData = (url) => {
 						<p>Regen</p>
 					</div>
 					<div class="tile" style="grid-area: werte";>
-						<p>${currentTime}</p>
+						<p>${current.time.substring(11)}</p>
 						<hr>
 						<p style="color: ${tempColor}">${current.temperature_2m.toFixed(0)}°C</p>
 						<hr>
 						<p style="color: ${windColor};">${current.wind_speed_10m.toFixed(0)} km/h</p>
 						<hr>
-						<p style="transform: rotate(${current.wind_direction_10m}deg); scale: 1.5;">↓</p>
+						<p style="transform: rotate(${current.wind_direction_10m}deg); scale: 1.5;" title="${current.wind_direction_10m}°">↓</p>
 						<hr>
 						<p>${current.relative_humidity_2m}%</p>
 						<hr>
 						<p>${current.precipitation_probability}%</p>
 					</div>
 					<div class="tile" style="background-color: transparent; grid-area: icon;">
-						<img src=${iconPicker(current.cloud_cover, current.precipitation_probability)} title="Wolkendecke: ${current.cloud_cover}%" />
+						<img src=${iconPicker(current.cloud_cover, current.precipitation_probability, Number(current.time.substring(11, 13)), Number(data.daily.sunrise[0].substring(11, 13)), Number(data.daily.sunset[0].substring(11, 13)))} title="Wolkendecke: ${current.cloud_cover}%" />
 					</div>
 				`;
 			}
@@ -220,6 +224,9 @@ const getData = (url) => {
 			
 			const renderHourly = () => {
 				forecastTiles.innerHTML = forecastFirstColumn;
+				document.querySelector("#forecast").innerHTML = `
+					<img src="pix/sunrise.webp" class="sun-icon"> ${data.daily.sunrise[0].substring(11)} · <img src="pix/sunset.webp" class="sun-icon"> ${data.daily.sunset[0].substring(11)}
+				`;
 				if (window.innerWidth < 850) {
 					length = 24;
 					document.querySelectorAll(".arrows").forEach(e => {
@@ -227,17 +234,15 @@ const getData = (url) => {
 					});
 				}
 				for(let i = start; i < start + length; i++) {
-					let time = `${Number(hourly.time[i].substring(11, 13)) + 2}:00`;
-					if ((Number(hourly.time[i].substring(11, 13)) + 2) === 25) {time = "01:00"};
-					let windIcon = "🠕";
-					let windColor = "hsl(210, 50%, 85%)";
-					let tempColor = "hsl(210, 50%, 85%)";
-					if (hourly.temperature_2m[i] > 29.9) {tempColor = "hsl(30, 50%, 50%)"};
-					if (hourly.temperature_2m[i] <= 0) {tempColor = "hsl(210, 55%, 55%)"};
-					if (hourly.wind_speed_10m[i] > 30) {windColor = "hsl(30, 50%, 50%)"};
+					let time = `${hourly.time[i].substring(11)}`;
+					let windColor = "var(--color1)";
+					let tempColor = "var(--color1)";
+					if (hourly.temperature_2m[i] > 29.9) {tempColor = "var(--accent-orange)"};
+					if (hourly.temperature_2m[i] <= 0) {tempColor = "var(--accent-light)"};
+					if (hourly.wind_speed_10m[i] > 30) {windColor = "var(--accent-orange)"};
 					forecastTiles.insertAdjacentHTML("beforeend", `
 						<div class="tile" id="index${i}">
-							<img src=${iconPicker(hourly.cloud_cover[i], hourly.precipitation_probability[i])} class="icon" title="Wolkendecke: ${hourly.cloud_cover[i]}%">
+							<img src=${iconPicker(hourly.cloud_cover[i], hourly.precipitation_probability[i], Number(hourly.time[i].substring(11, 13)), Number(data.daily.sunrise[0].substring(11, 13)), Number(data.daily.sunset[0].substring(11, 13)))} class="icon" title="Wolkendecke: ${hourly.cloud_cover[i]}%">
 							<hr>
 							<p>${time}</p>
 							<hr>
@@ -245,7 +250,7 @@ const getData = (url) => {
 							<hr>
 							<p style="color: ${windColor};">${hourly.wind_speed_10m[i].toFixed(0)} km/h</p>
 							<hr>
-							<p style="transform: rotate(${hourly.wind_direction_10m[i]}deg); scale: 1.5;">↓</p>
+							<p style="transform: rotate(${hourly.wind_direction_10m[i]}deg); scale: 1.5;" title="${hourly.wind_direction_10m[i]}°">↓</p>
 							<hr>
 							<p>${hourly.relative_humidity_2m[i]}%</p>
 							<hr>
@@ -263,11 +268,13 @@ const getData = (url) => {
 				}, 2500);
 				setTimeout(() => {
 					document.querySelector(".forecastTiles").scrollIntoView({ inline: "end" });
-				}, 3750);
+				}, 4000);
 			}
 
 			let arrowRight = document.querySelector("#arrowRight");
 			let arrowLeft = document.querySelector("#arrowLeft");
+			arrowLeft.classList.add("disabled");
+			arrowRight.classList.remove("disabled");
 			let page = 1;
 
 			arrowRight.addEventListener("click", () => {
@@ -301,8 +308,8 @@ const getData = (url) => {
     });
 }
 
-getData(url);
+pickLocation(city, lat, lon);
 
 setInterval(() => {
-	getData(url);
+	pickLocation(city, lat, lon);
 }, 900000);
