@@ -358,7 +358,7 @@ const getData = (url) => {
 				addDayData(24, 47);
 				addDayData(48, 71);
 				addDayData(72, 95);
-				console.log("threeDays = " + JSON.stringify(threeDays, null, 1));
+				// console.log("threeDays = " + JSON.stringify(threeDays, null, 1));
 
 				threeDaysTiles.innerHTML = threeDaysFirstColumn;
 				let dateCounter = 24;
