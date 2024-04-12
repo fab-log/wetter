@@ -32,9 +32,9 @@ const toggleDarkMode = () => {
 const iconPicker = (clouds, rain, time, sunrise, sunset) => {
 	let imagePath = "pix/sunny.webp";
 	if (rain > 50) {imagePath = "pix/rain.webp"}
-	else if (time > sunset && clouds > 33 && clouds <= 75) {imagePath = "pix/partially_cloudy_night.webp"}
-	else if (time <= sunrise && clouds > 33 && clouds <= 75) {imagePath = "pix/partially_cloudy_night.webp"}
-	else if (clouds > 33 && clouds <= 75) {imagePath = "pix/partially_cloudy.webp"}
+	else if (time > sunset && clouds > 50 && clouds <= 80) {imagePath = "pix/partially_cloudy_night.webp"}
+	else if (time <= sunrise && clouds > 50 && clouds <= 80) {imagePath = "pix/partially_cloudy_night.webp"}
+	else if (clouds > 50 && clouds <= 80) {imagePath = "pix/partially_cloudy.webp"}
 	else if (clouds > 75) {imagePath = "pix/cloudy.webp"}
 	else if (time > sunset || time <= sunrise) {imagePath = "pix/sunny_night.webp"}
 	return imagePath;
