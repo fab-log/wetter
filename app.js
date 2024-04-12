@@ -358,26 +358,29 @@ const getData = (url) => {
 				addDayData(24, 47);
 				addDayData(48, 71);
 				addDayData(72, 95);
-				// console.log("threeDays = " + JSON.stringify(threeDays, null, 1));
+				console.log("threeDays = " + JSON.stringify(threeDays, null, 1));
 
 				threeDaysTiles.innerHTML = threeDaysFirstColumn;
 				let dateCounter = 24;
 
 				for(let i = 0; i < 3; i++) {
 					let windColor = "var(--color1)";
-					let tempColor = "var(--color1)";
-					if (threeDays.maxTemp[i] > 29.9) {tempColor = "var(--accent-orange)"};
-					if (threeDays.maxTemp[i] <= 0) {tempColor = "var(--accent-light)"};
-					if (threeDays.windSpeed[i] > 30) {windColor = "var(--accent-orange)"};
+					let maxTempColor = "var(--color1)";
+					let minTempColor = "var(--color1)";
+					if (Number(threeDays.maxTemp[i]) > 29.9) {maxTempColor = "var(--accent-orange)"};
+					if (Number(threeDays.minTemp[i]) > 29.9) {minTempColor = "var(--accent-orange)"};
+					if (Number(threeDays.maxTemp[i]) <= 0) {maxTempColor = "var(--accent-light)"};
+					if (Number(threeDays.minTemp[i]) <= 0) {minTempColor = "var(--accent-light)"};
+					if (Number(threeDays.windSpeed[i]) > 30) {windColor = "var(--accent-orange)"};
 					threeDaysTiles.insertAdjacentHTML("beforeend", `
 						<div class="tile" id="index${i}">
 							<img src=${iconPicker(threeDays.cloudCover[i], threeDays.precipitation[i], 12, 6, 18)} class="icon" title="Wolkendecke: ${threeDays.cloudCover[i]}%">
 							<hr>
 							<p>${(hourly.time[dateCounter]).substring(8, 10)}.${(hourly.time[dateCounter]).substring(5, 7)}.</p>
 							<hr>
-							<p>${threeDays.maxTemp[i]}°C</p>
+							<p style="color: ${maxTempColor}">${threeDays.maxTemp[i]}°C</p>
 							<hr>
-							<p>${threeDays.minTemp[i]}°C</p>
+							<p style="color: ${minTempColor}">${threeDays.minTemp[i]}°C</p>
 							<hr>
 							<p style="color: ${windColor};">${threeDays.windSpeed[i]} km/h</p>
 							<hr>
