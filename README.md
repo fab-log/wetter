@@ -1,6 +1,6 @@
 # Wetter
 ### A simple weather application
-This site displays the current weather conditions and the 24 hour forecast for a chosen location. The UI language is German. Dark and light mode as well as a responsive design are provided.
+This site displays the current weather conditions, a 24 hour, and a 4 day forecast for a chosen location. The UI language is German. Dark and light mode as well as a responsive design are provided.
 
 On large screens the forcast has a pagination displaying 6 hours each. On smaller screens (e.g. mobile devices) the forecast can be accessed by horizontal scrolling. An animation simulates this scrolling movement after loading the page.
 
