@@ -8,6 +8,7 @@ const modalSearchResults = document.querySelector("#modalSearchResults");
 const currentCity = document.querySelector("#currentCity");
 const btnLightMode = document.querySelector("#btnLightMode");
 const btnDarkMode = document.querySelector("#btnDarkMode");
+const threeDaysTiles = document.querySelector(".threeDaysTiles");
 
 
 	// ###### HELPERS ######
@@ -183,8 +184,14 @@ const getData = (url) => {
 					</div>
 					<div class="tile" style="background-color: transparent; grid-area: icon;">
 						<img src=${iconPicker(current.cloud_cover, current.precipitation_probability, Number(current.time.substring(11, 13)), Number(data.daily.sunrise[0].substring(11, 13)), Number(data.daily.sunset[0].substring(11, 13)))} title="Wolkendecke: ${current.cloud_cover}%" />
+						<h3 id="sunrise" class="decent"></h3>
 					</div>
 				`;
+
+				document.querySelector("#sunrise").innerHTML = `
+					<img src="pix/sunrise.webp" class="sun-icon"> ${data.daily.sunrise[0].substring(11)} <br><img src="pix/sunset.webp" class="sun-icon"> ${data.daily.sunset[0].substring(11)}
+				`;
+
 			}
 
 			renderCurrent();			
@@ -211,8 +218,8 @@ const getData = (url) => {
 			</div>
 			`;
 
-			/* for (let i = 0; i < 48; i++) {
-				console.log("########################");
+			/* for (let i = 0; i < hourly.time.length; i++) {
+				console.log("[" + i + "] ########################");
 				console.log(hourly.time[i].substring(0, 10) + " | " + hourly.time[i].substring(11));
 				console.log("temp: " + hourly.temperature_2m[i]);
 				console.log("wind: " + hourly.wind_speed_10m[i]);
@@ -224,9 +231,6 @@ const getData = (url) => {
 			
 			const renderHourly = () => {
 				forecastTiles.innerHTML = forecastFirstColumn;
-				document.querySelector("#forecast").innerHTML = `
-					<img src="pix/sunrise.webp" class="sun-icon"> ${data.daily.sunrise[0].substring(11)} · <img src="pix/sunset.webp" class="sun-icon"> ${data.daily.sunset[0].substring(11)}
-				`;
 				if (window.innerWidth < 850) {
 					length = 24;
 					document.querySelectorAll(".arrows").forEach(e => {
@@ -264,10 +268,10 @@ const getData = (url) => {
 
 			if (window.innerWidth < 850) {
 				setTimeout(() => {
-					document.querySelector("#index20").scrollIntoView();
+					document.querySelector("#forecastCard").scrollLeft = 300;
 				}, 2500);
 				setTimeout(() => {
-					document.querySelector(".forecastTiles").scrollIntoView({ inline: "end" });
+					document.querySelector("#forecastCard").scrollLeft = -300;
 				}, 4000);
 			}
 
@@ -300,6 +304,94 @@ const getData = (url) => {
 				forecastTiles.innerHTML = forecastFirstColumn;
 				renderHourly();
 			});
+
+			let threeDaysFirstColumn = `
+			<div class="tile" style="text-align: left;">
+				<img src="pix/dummy.webp" class="icon">
+				<hr>
+				<p>Datum</p>
+				<hr>
+				<p>Temp. max</p>
+				<hr>
+				<p>Temp. min</p>
+				<hr>
+				<p>Wind</p>
+				<hr>
+				<p>Luftfeuchte</p>
+				<hr>
+				<p>Regen</p>
+			</div>
+			`;
+
+			const renderDaily = () => {
+
+				let threeDays = {
+					maxTemp: [],
+					minTemp: [],
+					cloudCover: [],
+					windSpeed: [],
+					precipitation: [],
+					humidity: []
+				}
+
+				const addDayData = (startNumber, endNumber) => {
+					let oneDayTemp = [];
+					let oneDayCloudCover = 0;
+					let oneDayWindSpeed = 0;
+					let oneDayPrecipitation = 0;
+					let oneDayHumidity = 0;
+					for (let i = startNumber; i < endNumber; i++) {
+						oneDayTemp.push(hourly.temperature_2m[i]);
+						oneDayCloudCover += hourly.cloud_cover[i];
+						oneDayWindSpeed += hourly.wind_speed_10m[i];
+						oneDayPrecipitation += hourly.precipitation_probability[i];
+						oneDayHumidity += hourly.relative_humidity_2m[i];
+					}
+					threeDays.maxTemp.push((Math.max(...oneDayTemp)).toFixed(0));
+					threeDays.minTemp.push((Math.min(...oneDayTemp)).toFixed(0));
+					threeDays.cloudCover.push((oneDayCloudCover / 24).toFixed(0));
+					threeDays.windSpeed.push((oneDayWindSpeed / 24).toFixed(0));
+					threeDays.precipitation.push((oneDayPrecipitation / 24).toFixed(0));
+					threeDays.humidity.push((oneDayHumidity / 24).toFixed(0));
+				}
+
+				addDayData(24, 47);
+				addDayData(48, 71);
+				addDayData(72, 95);
+				// console.log("threeDays = " + JSON.stringify(threeDays, null, 1));
+
+				threeDaysTiles.innerHTML = threeDaysFirstColumn;
+				let dateCounter = 24;
+
+				for(let i = 0; i < 3; i++) {
+					let windColor = "var(--color1)";
+					let tempColor = "var(--color1)";
+					if (threeDays.maxTemp[i] > 29.9) {tempColor = "var(--accent-orange)"};
+					if (threeDays.maxTemp[i] <= 0) {tempColor = "var(--accent-light)"};
+					if (threeDays.windSpeed[i] > 30) {windColor = "var(--accent-orange)"};
+					threeDaysTiles.insertAdjacentHTML("beforeend", `
+						<div class="tile" id="index${i}">
+							<img src=${iconPicker(threeDays.cloudCover[i], threeDays.precipitation[i], 12, 6, 18)} class="icon" title="Wolkendecke: ${threeDays.cloudCover[i]}%">
+							<hr>
+							<p>${(hourly.time[dateCounter]).substring(8, 10)}.${(hourly.time[dateCounter]).substring(5, 7)}.</p>
+							<hr>
+							<p>${threeDays.maxTemp[i]}°C</p>
+							<hr>
+							<p>${threeDays.minTemp[i]}°C</p>
+							<hr>
+							<p style="color: ${windColor};">${threeDays.windSpeed[i]} km/h</p>
+							<hr>
+							<p>${threeDays.humidity[i]}%</p>
+							<hr>
+							<p>${threeDays.precipitation[i]}%</p>
+						</div>
+					`);
+					dateCounter += 24;
+				};
+
+			}
+
+			renderDaily();
 
     })
     .catch(error => {

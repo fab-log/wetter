@@ -20,7 +20,7 @@
 
         :root {
             --bg-color1: hsl(210, 50%, 12%);
-            --bg-color2: hsl(210, 50%, 18%);
+            --bg-color2: hsl(210, 50%, 12%);
             --bg-color3: hsl(210, 50%, 20%);
             --bg-color4: hsl(210, 50%, 25%);
             --bg-input: hsl(210, 50%, 85%);
@@ -36,8 +36,8 @@
         }
 
         .light-mode {
-            --bg-color1: hsl(210, 50%, 80%);
-            --bg-color2: hsl(210, 50%, 85%);
+            --bg-color1: hsl(210, 50%, 25%);
+            --bg-color2: hsl(210, 50%, 80%);
             --bg-color3: hsl(210, 50%, 90%);
             --bg-color4: hsl(210, 50%, 95%);
             --bg-input: hsl(210, 50%, 100%);
@@ -75,12 +75,21 @@
         }
 
         img {
-            margin: 30px auto 0 auto;
-            width: 120px;
+            margin: 12px auto;
+            width: 110px;
+        }
+
+        h1 {
+            margin-left: 12px;
+        }
+
+        h2 {
+            margin: 6px 0 18px 12px;
         }
 
         h3 {
-            margin: 0 0 25px 0;
+            margin: 0;
+            line-height: 2;
         }
 
         .sel {
@@ -106,7 +115,7 @@
             margin: 6px 0;
         }
 
-        .currentTiles, .forecastTiles {
+        .currentTiles, .forecastTiles, .threeDaysTiles {
             display: grid;
             column-gap: 6px;
             text-align: center;
@@ -117,12 +126,20 @@
             grid-template-areas: "legende werte icon";
         }
 
+        .currentTiles br {
+            display: none;
+        }
+
         .forecastTiles {
             grid-template-columns: 120px repeat(6, minmax(75px, 120px));
         }
 
+        .threeDaysTiles {
+            grid-template-columns: 120px repeat(3, minmax(75px, 107.3px));
+        }
+
         .tile {
-            background-color: var(--bg-color1);
+            background-color: var(--bg-color2);
             padding: 6px 12px;
             border-radius: var(--border-radius);
         }
@@ -139,7 +156,7 @@
 
         .sun-icon {
             width: 25px;
-            margin: 0 0 -8px 0;
+            margin: 0 0 -8px 6px;
             padding: 0;
         }
 
@@ -190,7 +207,7 @@
         }
          .modal p {
             background-color: var(--color1);
-            color: var(--bg-color1);
+            color: var(--bg-color2);
             padding: 6px 12px;
             margin: 6px 12px;
             border-radius: var(--border-radius);
@@ -225,7 +242,7 @@
 
         @media (max-width: 850px) {
             .card {
-                margin: 12px 0;
+                margin: 0 0 12px 0;
                 padding: 25px 12px;
                 width: calc(100% - 24px);
                 border-radius: 0;
@@ -241,12 +258,18 @@
                 margin-top: 6px;
             }            
             img {
-                margin: 50px auto 0 auto;
+                margin: 20px auto;
                 /* margin: 0 auto 12px auto; */
                 width: 60px;
             }
             .currentTiles {
                 grid-template-columns: 120px 75px auto;
+            }
+            .currentTiles br {
+                display: block;
+            }
+            .sun-icon {
+                margin: 6px 0 -8px 0;
             }
             .toggle-icon {
                 margin: 10px 10px 0 0;
@@ -268,16 +291,27 @@
         <h1 id="currentCity"></h1>
 
         <div class="currentTiles"></div>
+
+        <!-- <h3 id="sunrise" class="decent"></h3> -->
+
     </div>
     
-    <div class="card">
+    <div class="card" id="forecastCard">
 
         <img src="pix/arrowRight.webp" class="arrows" id="arrowRight">
         <img src="pix/arrowLeft.webp" class="arrows disabled" id="arrowLeft">
 
-        <h3 id="forecast" class="decent"></h3>
+        <h2>24 Stunden</h2>
 
         <div class="forecastTiles"></div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Kommende Tage</h2>
+
+        <div class="threeDaysTiles"></div>
 
     </div>
 
