@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <title>Wetter</title>
     <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.png">
@@ -11,316 +12,120 @@
     <meta property="og:title" content="Wetter">
     <meta property="og:description" content="Einfach nur das Wetter">
     <meta property="og:image" content="https://fablog.eu/wetter/pix/screenshot.webp">
-
-    <style>
-        * {
-            transition: all ease-in-out 0.1s;
-            scroll-behavior: smooth;
-        }
-
-        :root {
-            --bg-color1: hsl(210, 50%, 12%);
-            --bg-color2: hsl(210, 50%, 12%);
-            --bg-color3: hsl(210, 50%, 20%);
-            --bg-color4: hsl(210, 50%, 25%);
-            --bg-input: hsl(210, 50%, 85%);
-            --accent-color: hsl(210, 50%, 50%);
-            --accent-light: hsl(210, 55%, 60%);
-            --accent-orange: hsl(30, 50%, 50%);
-            --color1: hsl(210, 50%, 85%);
-            --color2: hsl(210, 50%, 75%);
-            --color100: hsl(210, 50%, 100%);
-            --color-input: hsl(210, 50%, 12%);
-            --shadow: hsl(210, 50%, 0%);
-            --border-radius: 12px;
-        }
-
-        .light-mode {
-            --bg-color1: hsl(210, 50%, 25%);
-            --bg-color2: hsl(210, 50%, 80%);
-            --bg-color3: hsl(210, 50%, 90%);
-            --bg-color4: hsl(210, 50%, 95%);
-            --bg-input: hsl(210, 50%, 100%);
-            --accent-color: hsl(210, 50%, 50%);
-            --accent-light: hsl(210, 60%, 50%);
-            --accent-orange: hsl(30, 50%, 50%);
-            --color1: hsl(210, 50%, 25%);
-            --color2: hsl(210, 50%, 15%);
-            --color100: hsl(210, 50%, 0%);
-            --color-input: hsl(210, 50%, 15%);
-            --shadow: hsl(210, 50%, 20%);
-        }
-
-        body {
-            background-color: var(--bg-color1);
-            margin: 0;
-            font-family: monospace;
-            color: var(--color1);
-        }
-
-        input {
-            float: right;
-            border: none;
-            outline: none;
-            margin: 24px 0 0 0;
-            padding: 6px 12px;
-            border-radius: var(--border-radius);
-            width: 120px;
-            background-color: var(--bg-input);
-            color: var(--color-input);
-        }
-
-        input:focus {
-            outline: 3px solid var(--accent-color);
-        }
-
-        img {
-            margin: 12px auto;
-            width: 110px;
-        }
-
-        h1 {
-            margin-left: 10px;
-        }
-
-        h2 {
-            margin: 3px 0 20px 10px;
-        }
-
-        h3 {
-            margin: 0;
-            line-height: 2;
-        }
-
-        .sel {
-            float: right;
-        }
-
-        .decent {
-            color: hsl(210, 50%, 67%);
-        }
-
-        .card {
-            width: 800px;
-            margin: 25px calc(50% - 425px);
-            padding: 25px;
-            background-color: var(--bg-color3);
-            font-family: monospace;
-            border-radius: var(--border-radius);
-            overflow: auto;
-            white-space: nowrap;
-        }
-
-        .card p {
-            margin: 6px 0;
-        }
-
-        .currentTiles, .forecastTiles, .threeDaysTiles {
-            display: grid;
-            column-gap: 6px;
-            text-align: center;
-        }
-
-        .currentTiles {
-            grid-template-columns: 120px 100px auto;
-            grid-template-areas: "legende werte icon";
-        }
-
-        .currentTiles br {
-            display: none;
-        }
-
-        .forecastTiles {
-            grid-template-columns: 120px repeat(6, minmax(75px, 120px));
-        }
-
-        .threeDaysTiles {
-            grid-template-columns: 120px repeat(3, minmax(75px, 107.3px));
-        }
-
-        .tile {
-            background-color: var(--bg-color2);
-            padding: 6px 12px;
-            border-radius: var(--border-radius);
-        }
-
-        .tile hr {
-            border: none;
-            border-bottom: 1px solid var(--bg-color3);
-        }
-
-        .icon {
-            margin: 3px 0;
-            width: 25px;
-        }
-
-        .sun-icon {
-            width: 25px;
-            margin: 0 0 -8px 6px;
-            padding: 0;
-        }
-
-        .toggle-icon {
-            width: 25px;
-            margin: 25px;
-            padding: 0; float: right;
-            filter: grayscale(100%);
-            opacity: 0.5;
-        }
-
-        #btnDarkMode {
-            display: none;
-            filter: brightness(0%);
-        }
-
-        .arrows {
-            width: 36px;
-            margin: 0 0 0 12px;
-            float: right;
-        }
-
-        .arrows:hover {
-            cursor: pointer;
-            filter: brightness(120%);
-        }
-
-        .disabled {
-            opacity: 0.2;
-        }
-
-        .disabled:hover {
-            cursor: auto;
-            filter: none;
-        }
-
-        .modal {
-            display: none;
-            position: absolute;
-            top: 100px;
-            left: 50%;
-            transform: translate(-50%, 0);
-            background-color: var(--bg-color3);
-            padding: 12px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 0 24px var(--shadow);
-            font-family: monospace;
-        }
-         .modal p {
-            background-color: var(--color1);
-            color: var(--bg-color2);
-            padding: 6px 12px;
-            margin: 6px 12px;
-            border-radius: var(--border-radius);
-         }
-
-         .modal p:hover {
-            cursor: pointer;
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .modal h3 {
-            text-align: center;
-            color: var(--color1);
-        }
-
-        .alert {
-            display: none;
-            position: fixed;
-            top: 100px;
-            left: 50%;
-            transform: translate(-50%, 0);
-            background-color: var(--bg-color3);
-            color: var(--color1);
-            opacity: 0.95;
-            border-radius: var(--border-radius);
-            border: solid 4px var(--accent-color);
-            box-shadow: 0 0 24px var(--shadow);
-            padding: 24px;
-            text-align: center;
-        }
-
-        @media (max-width: 850px) {
-            .card {
-                margin: 0 0 12px 0;
-                padding: 25px 12px;
-                width: calc(100% - 24px);
-                border-radius: 0;
-            }
-            .forecastTiles {
-                grid-template-columns: 120px repeat(24, minmax(75px, 120px));
-            }
-        }
-
-        @media (max-width: 500px) {
-            h1, h2 {
-                margin-left: 0;
-            }
-            input {
-                float: none;
-                margin-top: 6px;
-            }            
-            img {
-                margin: 20px auto;
-                /* margin: 0 auto 12px auto; */
-                width: 60px;
-            }
-            .currentTiles {
-                grid-template-columns: 120px 75px auto;
-            }
-            .currentTiles br {
-                display: block;
-            }
-            .sun-icon {
-                margin: 6px 0 -8px 0;
-            }
-            .toggle-icon {
-                margin: 10px 10px 0 0;
-            }
-        }
-
-    </style>
+    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
 
-    <div class="card">
-
-        <img src="pix/sunny.webp" class="toggle-icon" title="toggle light mode" id="btnLightMode" onclick="toggleLightMode()">
-        <img src="pix/sunny_night.webp" class="toggle-icon" title="toggle dark mode" id="btnDarkMode" onclick="toggleDarkMode()">
-            
-        <input type="text" id="inpSearch" placeholder="Ort suchen"/>
-
-        <h1 id="currentCity"></h1>
-
-        <div class="currentTiles"></div>
-
-        <!-- <h3 id="sunrise" class="decent"></h3> -->
-
-    </div>
-    
-    <div class="card" id="forecastCard">
-
-        <img src="pix/arrowRight.webp" class="arrows" id="arrowRight">
-        <img src="pix/arrowLeft.webp" class="arrows disabled" id="arrowLeft">
-
-        <h2>24 Stunden</h2>
-
-        <div class="forecastTiles"></div>
-
+    <div class="loader">
+        <img src="pix/sunny.webp" alt="Sonne (loader)">
     </div>
 
-    <div class="card">
+    <div class="main">
 
-        <h2>Kommende Tage</h2>
+        <div class="card">
 
-        <div class="threeDaysTiles"></div>
+            <img src="pix/icon_light_mode.webp" class="toggle-icon" alt="Hellen Modus aktivieren" title="Hellen Modus aktivieren" id="btnLightMode"
+                onclick="toggleLightMode()">
+            <img src="pix/icon_dark_mode.webp" class="toggle-icon" alt="Dunklen Modus aktivieren" title="Dunklen Modus aktivieren" id="btnDarkMode"
+                onclick="toggleDarkMode()">
 
-    </div>
+            <input type="text" id="inpSearch" placeholder="Ort suchen" />
 
-    <div class="modal" id="modalSearchResults">
-        <h3>Bitte wählen</h3>
-    </div>
+            <div>
+                <h1>
+                    <span id="currentCity"></span>
+                    <img src="pix/favourite_empty.webp" id="favourite_empty" alt="Als Favorit kennzeichnen"
+                        title="Als Favorit kennzeichnen" class="favouritesIcon" onclick="markAsFavourite()">
+                    <img src="pix/favourite_full.webp" id="favourite_full" alt="Nicht mehr als Favorit kennzeichnen"
+                        title="Nicht mehr als Favorit kennzeichnen" class="favouritesIcon" onclick="unmarkFavourite()">
+                    <img src="pix/menu.webp" id="favourites_menu" alt="Aus Favoriten wählen" title="Aus Favoriten wählen"
+                        class="favouritesIcon" onclick="favouritesMenu()">
+                </h1>
+            </div>
+
+            <div class="currentTiles"></div>
+
+            <!-- <h3 id="sunrise" class="decent"></h3> -->
+
+        </div>
+
+        <div class="card" id="forecastCard">
+
+            <img src="pix/arrowRight.webp" alt="6 Stunden vor" class="arrows" id="arrowRight24">
+            <img src="pix/arrowLeft.webp" alt="6 Stunden zurück" class="arrows disabled" id="arrowLeft24">
+
+            <h2 class="firstChild">24 Stunden</h2>
+
+            <div class="forecastTiles"></div>
+
+        </div>
+
+        <div class="card">
+
+            <img src="pix/arrowRight.webp" alt="2 Tage vor" class="arrows" id="arrowRight3Days">
+            <img src="pix/arrowLeft.webp" alt="2 Tage zurück" class="arrows disabled" id="arrowLeft3Days">
+
+            <h2 class="firstChild">Kommende Tage</h2>
+
+            <div class="threeDaysTiles"></div>
+
+        </div>
+
+        <div class="modal" id="modalSearchResults">
+            <h3>Bitte wählen</h3>
+        </div>
+
+        <div class="modal" id="modalFavourites">
+            <h3>Favoriten</h3>
+        </div>
+
+        <div class="terms">
+            <p class="terms-p">data provided by <a href="https://open-meteo.com" target="_blank"
+                    rel="noopener noreferrer">Open-Meteo</a></p>
+            <p class="terms-p" id="linkToTerms">Impressum / Datenschutz <span id="closeTerms">schließen</span></p>
+
+            <div id="terms">
+                <h3><br>Impressum</h3>
+                <p>
+                    Die folgenden Angaben entsprechen den Vorgaben von § 5 TMG:
+                    <br><br>
+                    Verantwortliche Person:<br>
+                    Fabian Ruin
+                    <br><br>
+                    Kontaktdaten:<br>
+                    E-Mail-Adresse: fruin@vivaldi.net
+                    <br><br>
+                    Im Sinne von § 7 Absatz 1 TMG bin ich für die eigenen Inhalte auf dieser Webseite verantwortlich. Durch
+                    §§ 8 bis einschließlich 10 TMG bin ich aber nicht verpflichtet, gespeicherte oder übermittelte fremde
+                    Inhalte zu überwachen oder diese auf Rechtswidrigkeit zu prüfen. Das befreit mich jedoch nicht von der
+                    Pflicht, der Sperrung und Entfernung von Informationen nach geltenden Gesetzen nachzukommen.
+                </p>
+                <h3><br>Datenschutz</h3>
+                <h4>Ganz einfach.</h4>
+                <p>Von meiner Seite aus gibt es</p>
+                <ul>
+                    <li>Keine Cookies.</li>
+                    <li>Keine Tracker.</li>
+                    <li>Keine Werbung.</li>
+                </ul>
+                <p>Die Wetterdaten für diese Seite werden von <a href="https://open-meteo.com" target="_blank"
+                        rel="noopener noreferrer">Open-Meteo (Link)</a> zur Verfügung gestellt.</p>
+                <p>Die von Ihnen eingegebenen Daten werden im Cache des Browsers auf Ihrem Endgerät, ähnlich einem Cookie,
+                    gespeichert. Es werden dabei keinerlei Daten an anderer Stelle gespeichert oder weitergegeben.<br>
+                    Um diese Daten zu löschen, können Sie entweder alle Browserdaten löschen oder gezielt die Daten der
+                    Webseite fablog.eu löschen. Sie finden die entsprechenden Optionen in der Regel in Ihren
+                    Browsereinstellungen oder links in der Adresszeile.</p>
+                <p>Verlinkte Seiten haben ihre eigenen Datenschutzrichtlinien, die eventuell auch schon alleine durch die
+                    Tatsache, dass hier auf sie verlinkt wird zur Geltung kommen.</p>
+                <p>Diese Webseite wird von der STRATO AG, Pascalstraße 10, 10587 Berlin gehostet. Strato nutzt und setzt
+                    Cookies. Genaueres dazu erfahren Sie <a href="https://www.strato.de/datenschutz/">hier</a>.
+                </p>
+            </div>
+
+        </div>
+
+</div>
 
     <div class="alert"></div>
 
