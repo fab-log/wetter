@@ -115,8 +115,8 @@ const favouritesMenu = () => {
 		return;
 	}
 	modalFavourites.innerHTML = `
+		<img src="pix/x.webp" alt="close" style="width: 20px; float: right; margin: 12px;" onclick="closeModals()">
 		<h2>Favoriten</h2>
-		<h3><a onclick="closeModals()">(schließen)</a></h3>
 		`;
 	modalFavourites.style.display = "block";
 	let index = 1;
@@ -231,7 +231,10 @@ const search = () => {
 				pickLocation(results.name, results.country, results.latitude, results.longitude);
 				return;
 			} else {
-				modalSearchResults.innerHTML = `<h3>Bitte wählen</h3>`;
+				modalSearchResults.innerHTML = `
+					<img src="pix/x.webp" alt="close" style="width: 20px; float: right; margin: 12px;" onclick="closeModals()">
+					<h3>Bitte wählen</h3>
+				`;
 				modalSearchResults.style.display = "block";
 				let index = 1;
 				data.results.forEach(e => {
@@ -464,7 +467,7 @@ const getData = (url) => {
 
 				threeDaysTiles.innerHTML = threeDaysFirstColumn;
 
-				const renderthreeDayTile = (startNumber, stopNumber) => {
+				const renderDailyTile = (startNumber, stopNumber) => {
 					let daily = {
 						temperature: [],
 						cloudCover: [],
@@ -476,12 +479,22 @@ const getData = (url) => {
 					}
 
 					let index = startNumber;
-					for (let i = 0; i < 4; i++) {
+					for (let iteration = 0; iteration < 4; iteration++) {
 						let temperature = 0;
+						let minMaxArray = [];
 						for (let i = index; i < index + 6; i++) {
 							temperature += hourly.temperature_2m[i];
+							minMaxArray.push(hourly.temperature_2m[i]);
 						}
-						daily.temperature.push((temperature / 6).toFixed(0));
+						if (iteration === 0 || iteration === 2) {
+							daily.temperature.push((temperature / 6).toFixed(0));	// get average temperature for morning and evening
+						}
+						if (iteration === 1) {
+							daily.temperature.push(Math.max(...minMaxArray).toFixed(0));	// get maximum temperature for afternoon
+						}
+						if (iteration === 3) {
+							daily.temperature.push(Math.min(...minMaxArray).toFixed(0));	// get minimum temperature for nights
+						}
 
 						let cloudCover = 0;
 						for (let i = index; i < index + 6; i++) {
@@ -537,10 +550,10 @@ const getData = (url) => {
 					`);
 					counter += 1;
 				}
-				renderthreeDayTile(30, 53);
-				renderthreeDayTile(54, 77);
-				renderthreeDayTile(78, 101);
-				renderthreeDayTile(102, 123);
+				renderDailyTile(30, 53);
+				renderDailyTile(54, 77);
+				renderDailyTile(78, 101);
+				renderDailyTile(102, 123);
 				// console.log(hourly);
 			}
 
