@@ -292,13 +292,15 @@ const getData = (url) => {
 					<div class="tile" style="text-align: left; grid-area: legende;">
 						<p>${(current.time).substring(8, 10)}.${(current.time).substring(5, 7)}.${(current.time).substring(0, 4)}</p>
 						<hr>
+						<p>Wolkendecke</p>
+						<hr>
 						<p>Wind</p>
 						<hr>
 						<p>Windrichtung</p>
 						<hr>
 						<p>Luftfeuchte</p>
 						<hr>
-						<p>Regen</p>
+						<p>Niederschlag</p>
 						<hr>
 						<p>Sonne ↑</p>
 						<hr>
@@ -306,6 +308,8 @@ const getData = (url) => {
 					</div>
 					<div class="tile" style="grid-area: werte";>
 						<p>${current.time.substring(11)}</p>
+						<hr>
+						<p>${current.cloud_cover}<span class="unit">&#8239%</span></p>
 						<hr>
 						<p style="color: ${windColorPicker(current.wind_speed_10m)};">${current.wind_speed_10m.toFixed(0)}<span class="unit">&#8239km/h</span></p>
 						<hr>
@@ -320,9 +324,9 @@ const getData = (url) => {
 						<p>${data.daily.sunset[0].substring(11)}</p>
 					</div>
 					<div class="tile" style="background-color: var(--bg-color4); grid-area: icon;">
-						<img src=${iconPicker(Number(current.time.substring(11, 13)), Number(data.daily.sunrise[0].substring(11, 13)), Number(data.daily.sunset[0].substring(11, 13)), current.weather_code)} alt="Aktuelle Wetterlage" title="Wolkendecke: ${current.cloud_cover}%" />
+						<img src=${iconPicker(Number(current.time.substring(11, 13)), Number(data.daily.sunrise[0].substring(11, 13)), Number(data.daily.sunset[0].substring(11, 13)), current.weather_code)} alt="Aktuelle Wetterlage" title="Wolkendecke: ${current.cloud_cover}%" style="margin-top: 24px;" />
 						<h1 style="color: ${tempColorPicker(current.temperature_2m)}">${current.temperature_2m.toFixed(0)}<span class="unit">&#8239°C</span></h1>
-						<p>${iconMap[current.weather_code][0]}</p>
+						<p style="text-wrap: wrap;">${iconMap[current.weather_code][0]}</p>
 					</div>
 				`;
 
@@ -348,13 +352,15 @@ const getData = (url) => {
 				<hr>
 				<p>Temperatur</p>
 				<hr>
+				<p>Wolkendecke</p>
+				<hr>
 				<p>Wind</p>
 				<hr>
 				<p>Windrichtung</p>
 				<hr>
 				<p>Luftfeuchte</p>
 				<hr>
-				<p>Regen</p>
+				<p>Niederschlag</p>
 			</div>
 			`;
 
@@ -387,6 +393,8 @@ const getData = (url) => {
 							<p>${time}</p>
 							<hr>
 							<p style="color: ${tempColorPicker(hourly.temperature_2m[i])}">${hourly.temperature_2m[i].toFixed(0)}<span class="unit">&#8239°C</span></p>
+							<hr>
+							<p>${hourly.cloud_cover[i]}<span class="unit">&#8239%</span></p>
 							<hr>
 							<p style="color: ${windColorPicker(hourly.wind_speed_10m[i])};">${hourly.wind_speed_10m[i].toFixed(0)}<span class="unit">&#8239km/h</span></p>
 							<hr>
@@ -451,13 +459,15 @@ const getData = (url) => {
 				<hr>
 				<p>Temperatur</p>
 				<hr>
+				<p>Wolkendecke</p>
+				<hr>
 				<p>Wind</p>
 				<hr>
 				<p>Windrichtung</p>
 				<hr>
 				<p>Luftfeuchte</p>
 				<hr>
-				<p>Regen</p>
+				<p>Niederschlag</p>
 			</div>
 			`;
 
@@ -539,6 +549,8 @@ const getData = (url) => {
 						<hr>
 						<div class="subTiles"><div style="color: ${tempColorPicker(daily.temperature[0])}">${daily.temperature[0]}<span class="unit">&#8239°C</span></div><div style="color: ${tempColorPicker(daily.temperature[1])}">${daily.temperature[1]}<span class="unit">&#8239°C</span></div><div style="color: ${tempColorPicker(daily.temperature[2])}">${daily.temperature[2]}<span class="unit">&#8239°C</span></div><div style="color: ${tempColorPicker(daily.temperature[3])}">${daily.temperature[3]}<span class="unit">&#8239°C</span></div></div>
 						<hr>
+						<div class="subTiles"><div>${daily.cloudCover[0]}<span class="unit">&#8239%</span></div><div>${daily.cloudCover[1]}<span class="unit">&#8239%</span></div><div>${daily.cloudCover[2]}<span class="unit">&#8239%</span></div><div>${daily.cloudCover[3]}<span class="unit">&#8239%</span></div></div>
+						<hr>
 						<div class="subTiles"><div style="color: ${windColorPicker(daily.windSpeed[0])}">${daily.windSpeed[0]}<span class="unit">&#8239km/h</span></div><div style="color: ${windColorPicker(daily.windSpeed[1])}">${daily.windSpeed[1]}<span class="unit">&#8239km/h</span></div><div style="color: ${windColorPicker(daily.windSpeed[2])}">${daily.windSpeed[2]}<span class="unit">&#8239km/h</span></div><div style="color: ${windColorPicker(daily.windSpeed[3])}">${daily.windSpeed[3]}<span class="unit">&#8239km/h</span></div></div>
 						<hr>
 						<div class="subTiles"><div style="transform: rotate(${daily.windDirection[0]}deg);" title="${daily.windDirection[0]} °">↓</div><div style="transform: rotate(${daily.windDirection[1]}deg);" title="${daily.windDirection[1]} °">↓</div><div style="transform: rotate(${daily.windDirection[2]}deg);" title="${daily.windDirection[2]} °">↓</div><div style="transform: rotate(${daily.windDirection[3]}deg);" title="${daily.windDirection[3]} °">↓</div></div>
@@ -586,6 +598,77 @@ const getData = (url) => {
 					arrowRight3Days.classList.remove("disabled");
 				})
 			}
+
+			const renderSevenDaysScale = () => {
+
+				let sevenDaysScale = document.querySelector(".sevenDaysScale");
+				sevenDaysScale.innerHTML = "";
+
+				for (let i = 0; i < 168; i += 24) {
+					let dayString = window.innerWidth > 1000 ? dayPicker(data.hourly.time[i]) : dayPicker(data.hourly.time[i]).substring(0, 2) + ".";
+					sevenDaysScale.insertAdjacentHTML("beforeend", `
+						<p>${dayString}</p>
+					`);
+				}
+			}
+
+			renderSevenDaysScale();
+
+			const renderTrend = () => {
+
+				const divTrendTemperatureItems = document.querySelector("#divTrendTemperatureItems");
+				divTrendTemperatureItems.innerHTML = "";
+				
+				let trendTemperatures = data.hourly.temperature_2m;
+				
+				for (let i = 0; i < 168; i++) {
+					/* let shiftedTemperature = trendTemperatures[i] + 60;
+					let hue = shiftedTemperature >= 70 ? shiftedTemperature * -3.6 + 432 : shiftedTemperature * -0.85 + 240; */
+					let sunshineRate = 100 - data.hourly.cloud_cover[i];
+					let hue = sunshineRate * -1.6 + 210;
+					divTrendTemperatureItems.insertAdjacentHTML("beforeend", `							
+						<div class="trendTemperatureItem" style="margin-bottom: ${trendTemperatures[i] + 58}px; background-color: hsl(${hue}, 50%, 50%)" title="Temperatur: ${trendTemperatures[i].toFixed(0)}°C\nWolkendecke: ${data.hourly.cloud_cover[i]}%"></div>
+					`);
+				}
+			}
+
+			renderTrend();
+
+			/* const renderCloudCover = () => {
+				const divTrendCloudCoverItems = document.querySelector("#divTrendCloudCoverItems");
+				divTrendCloudCoverItems.innerHTML = "";
+
+				let trendCloudCoverValues = data.hourly.cloud_cover;
+
+				for (let i = 0; i < 168; i++) {
+					let sunshineRate = 100 - trendCloudCoverValues[i];
+					let hue = sunshineRate * -1.6 + 210;
+					divTrendCloudCoverItems.insertAdjacentHTML("beforeend", `
+						<div class="trendCloudCoverItem" style="background-color: hsl(${hue}, 50%, 50%)"></div>
+					`);
+				}
+
+			}
+
+			renderCloudCover(); */
+
+			const renderPrecipitation = () => {
+				const divTrendPrecipitationItems = document.querySelector("#divTrendPrecipitationItems");
+				divTrendPrecipitationItems.innerHTML = "";
+
+				let trendPrecipitationValues = data.hourly.precipitation_probability;
+
+				for (let i = 0; i < 168; i++) {
+					// console.log(i + ": " + trendPrecipitationValues[i]);
+					let itemHeight = trendPrecipitationValues[i] * 0.6;
+					divTrendPrecipitationItems.insertAdjacentHTML("beforeend", `
+						<div class="trendPrecipitationItem" style="height: ${itemHeight}px; background-color: hsl(210, 50%, 50%)" title="${trendPrecipitationValues[i]}%"></div>
+					`);
+				}
+
+			}
+
+			renderPrecipitation();
 
 		})
 		.catch(error => {

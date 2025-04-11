@@ -3,12 +3,17 @@
     scroll-behavior: smooth;
 }
 
+.blue {
+    background-color: hsl(140, 33%, 50%);
+}
+
 :root {
     --bg-color1: hsl(210, 50%, 12%);
     --bg-color2: hsl(210, 50%, 12%);
     --bg-color3: hsl(210, 50%, 20%);
     --bg-color4: transparent;
     --bg-input: hsl(210, 50%, 85%);
+    --accent-decent: hsl(210, 50%, 33%);
     --accent-color: hsl(210, 50%, 50%);
     --accent-light: hsl(210, 50%, 60%);
     --accent-orange: hsl(30, 50%, 50%);
@@ -26,6 +31,7 @@
     --bg-color3: hsl(210, 50%, 85%);
     --bg-color4: transparent;
     --bg-input: hsl(210, 50%, 100%);
+    --accent-decent: hsl(210, 50%, 67%);
     --accent-color: hsl(210, 50%, 50%);
     --accent-light: hsl(210, 50%, 50%);
     --accent-orange: hsl(30, 50%, 50%);
@@ -161,7 +167,7 @@ h3 {
 }
 
 .threeDaysTiles {
-    grid-template-columns: 125px repeat(2, 334px);
+    grid-template-columns: 125px repeat(2, 1fr);
     /* repeat(3, minmax(75px, 107.3px)) */
     grid-template-areas: "two three four";
 }
@@ -183,9 +189,19 @@ h3 {
     border-radius: var(--border-radius);
 }
 
-.tile hr {
+hr {
     border: none;
     border-bottom: 1px solid var(--bg-color3);
+}
+
+.hrFat {
+    border-bottom-width: 3px;
+    margin: 12px 0;
+}
+
+.spacer-24 {
+    width: 100%;
+    height: 24px;
 }
 
 .icon {
@@ -226,6 +242,133 @@ h3 {
 .disabled:hover {
     cursor: auto;
     filter: none;
+}
+
+/* .divTrendTemperatures {
+    display: block;
+} */
+
+.sevenDaysScale {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: var(--border-radius);
+    background-color: var(--bg-color2);
+}
+
+.sevenDaysScale p {
+    text-align: center;
+}
+
+.sevenDaysScale p:not(:last-child) {
+    border-right: 1px solid var(--bg-color3);
+}
+
+.pseudoH4 {
+    position: relative;
+    top: 0px;
+    left: 12px;
+    opacity: 0.67;
+}
+
+#divTrendTemperatures,
+#divTrendCloudCover,
+#divTrendPrecipitation {
+    margin-top: -12px;
+    margin-bottom: 0;
+}
+
+#divTrendTemperatureItems,
+#divTrendCloudCoverItems,
+#divTrendPrecipitationItems {
+    display: grid;
+    grid-template-columns: repeat(168, 1fr);
+    gap: 0;
+    padding: 12px;
+    /* border-radius: var(--border-radius);
+    background-color: var(--bg-color2); */
+}
+
+#divTrendTemperatureItems {
+    height: 120px;
+}
+
+.trendTempLinePlus40,
+.trendTempLinePlus20,
+.trendTempLine0,
+.trendTempLineMinus20,
+.trendTempLineMinus40,
+.trendPrecipitationLine100,
+.trendPrecipitationLine50,
+.trendPrecipitationLine0 {
+    position: relative;
+    margin: 0 12px;
+    width: calc(100% - 24px);
+    height: 0px;
+    /* background-color: var(--accent-color);
+    opacity: 0.15; */
+}
+
+.trendTempLinePlus40,
+.trendTempLinePlus20,
+.trendTempLineMinus20,
+.trendTempLineMinus40,
+.trendPrecipitationLine100,
+.trendPrecipitationLine50,
+.trendPrecipitationLine0 {
+    border-bottom: solid 1px var(--accent-decent);
+}
+
+.trendTempLinePlus40 {
+    top: 26px;
+}
+
+.trendTempLinePlus20 {
+    top: 45px;
+}
+
+.trendTempLine0 {
+    border-bottom: solid 3px var(--accent-decent);
+    top: 64px;
+}
+
+.trendTempLineMinus20 {
+    top: 81px;
+}
+
+.trendTempLineMinus40 {
+    top: 100px;
+}
+
+#divTrendPrecipitationItems {
+    height: 60px;
+}
+
+.trendPrecipitationLine100 {
+    top: 3px;
+}
+
+.trendPrecipitationLine50 {
+    top: 32px;
+}
+
+.trendPrecipitationLine0 {
+    top: 61px;
+}
+
+.trendTemperatureItem,
+.trendPrecipitationItem {
+    z-index: 10;
+    align-self: end;
+}
+
+.trendTemperatureItem {
+    height: 3px;
+}
+
+#divTrendCloudCoverItems {
+    height: 24px;
 }
 
 .modal {
@@ -323,6 +466,11 @@ h3 {
     left: 50%;
     transform: translate(-50%, -50%);
     animation: glow 2.5s ease-in-out infinite;
+}
+
+.toLeft {
+    animation: toLeft 0.5s ease-in-out;
+    animation-fill-mode: forwards;
 }
 
 @keyframes glow {
