@@ -275,8 +275,9 @@ hr {
 #divTrendTemperatures,
 #divTrendCloudCover,
 #divTrendPrecipitation {
-    margin-top: -12px;
-    margin-bottom: 0;
+    position: relative;
+    top: -12px;
+    bottom: 0;
 }
 
 #divTrendTemperatureItems,
@@ -341,6 +342,41 @@ hr {
     top: 100px;
 }
 
+.trendTempValuePlus40,
+.trendTempValuePlus20,
+.trendTempValue0,
+.trendTempValueMinus20,
+.trendTempValueMinus40,
+.trendPrecipitationValue100,
+.trendPrecipitationValue50,
+.trendPrecipitationValue0 {
+    position: absolute;
+    left: -9px;
+    font-size: 75%;
+    text-align: end;
+    opacity: 0.67;
+}
+
+.trendTempValuePlus40 {
+    top: 20px;
+}
+
+.trendTempValuePlus20 {
+    top: 39px;
+}
+
+.trendTempValue0 {
+    top: 59px;
+}
+
+.trendTempValueMinus20 {
+    top: 78px;
+}
+
+.trendTempValueMinus40 {
+    top: 98px;
+}
+
 #divTrendPrecipitationItems {
     height: 60px;
 }
@@ -357,14 +393,29 @@ hr {
     top: 61px;
 }
 
+.trendPrecipitationValue100 {
+    top: 0px;
+}
+
+.trendPrecipitationValue50 {
+    top: 30px;
+}
+
+.trendPrecipitationValue0 {
+    top: 59px;
+}
+
 .trendTemperatureItem,
 .trendPrecipitationItem {
     z-index: 10;
     align-self: end;
+    border-top-right-radius: 1px;
+    border-top-left-radius: 1px;
 }
 
 .trendTemperatureItem {
     height: 3px;
+    border-radius: 1px;
 }
 
 #divTrendCloudCoverItems {
